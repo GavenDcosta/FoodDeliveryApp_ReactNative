@@ -3,6 +3,7 @@ import { Text, TouchableOpacity, View, Image } from 'react-native';
 import { MapPinIcon } from "react-native-heroicons/outline";
 import { StarIcon } from "react-native-heroicons/solid";
 
+import { urlFor } from '../sanity';
 
 const RestaurentCard = ({
     id,
@@ -16,11 +17,24 @@ const RestaurentCard = ({
     long,
     lat,
 }) => {
+
+
+    const truncateAddress = (address, maxWords) => {
+        const words = address.split(' ');
+        if (words.length <= maxWords) {
+          return address;
+        }
+        return words.slice(0, maxWords).join(' ') + '...';
+    };
+
+    const truncatedAddress = truncateAddress(address, 3);
+
+
     return (
         <TouchableOpacity className="bg-white mr-3 shadow">
             <Image 
                source={{
-                uri: imgUrl,
+                uri: urlFor(imgUrl).url(),
                }} 
                className="h-36 w-64 rounded"
             />
@@ -35,7 +49,7 @@ const RestaurentCard = ({
 
                 <View className="flex-row items-center space-x-1">
                   <MapPinIcon color="gray" opacity={0.4} size={22}/>
-                  <Text className="text-xs text-gray-500">Nearby • {address}</Text>
+                  <Text className="text-xs text-gray-500">Nearby • {truncatedAddress}</Text>
                 </View>
             </View>
         </TouchableOpacity>

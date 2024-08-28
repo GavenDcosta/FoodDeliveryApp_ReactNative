@@ -1,5 +1,5 @@
 import { useNavigation } from '@react-navigation/native';
-import React, {useLayoutEffect} from 'react';
+import React, {useLayoutEffect, useState, useEffect} from 'react';
 import {Text, View, Image, TextInput, ScrollView } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { UserIcon, ChevronDownIcon, MagnifyingGlassIcon, AdjustmentsVerticalIcon } from "react-native-heroicons/outline";
@@ -7,14 +7,37 @@ import { UserIcon, ChevronDownIcon, MagnifyingGlassIcon, AdjustmentsVerticalIcon
 import Categories from '../components/Categories';
 import FeaturedRow from '../components/FeaturedRow';
 
+import sanityClient from '../sanity';
+
 const HomeScreen = () => {
     const navigation = useNavigation()
+
+    const [featuredCategories, setFeaturedCategories] = useState([])
 
     useLayoutEffect(() => {
       navigation.setOptions({
         headerShown: false,
       })
     }, [])
+
+
+    useEffect(() => {
+       sanityClient.fetch(
+        `
+        *[_type == "featured"] {
+          ...,
+          restaurents[]->{
+            ...,
+            dishes[]->
+          }
+        }
+        `
+       ).then(data=>{
+        setFeaturedCategories(data)
+       })  
+    }, [])
+
+    //console.log(featuredCategories)
 
     return (
         <SafeAreaView className="bg-white pt-5">
@@ -64,7 +87,17 @@ const HomeScreen = () => {
                     <Categories/>
 
                     {/* Features Rows */}
-                    <FeaturedRow
+
+                    {featuredCategories.map((category) => (
+                      <FeaturedRow
+                        key={category._id}
+                        id={category._id}
+                        title={category.name}
+                        description={category.short_description}   
+                      />
+                    ))}
+
+                    {/* <FeaturedRow
                       id="123"
                       title="Featured"
                       description="Paid placements from our partners"    
@@ -80,7 +113,7 @@ const HomeScreen = () => {
                       id="12345"
                       title="Offers near you"
                       description="Why not support your local restaurent tonight"
-                    />
+                    /> */}
 
                  </ScrollView>
 
