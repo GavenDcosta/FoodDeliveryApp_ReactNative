@@ -68,9 +68,9 @@ const DishRow = ({ id, name, description, price, image }) => {
                            />
                         </TouchableOpacity>
                     </View>
-                    <Text>
+                    {/* <Text>
                       Cost: {items.length > 0 && `${price * items.length}₹`}
-                    </Text>
+                    </Text> */}
                 </View>
             )}
 
